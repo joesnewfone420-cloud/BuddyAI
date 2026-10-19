@@ -1,0 +1,43 @@
+name: Build Buddy APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Build APK
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease --stacktrace
+          cp app/build/outputs/apk/release/app-release.apk Buddy.apk
+
+      - name: Keep APK as a build file
+        uses: actions/upload-artifact@v4
+        with:
+          name: Buddy-APK
+          path: Buddy.apk
+
+      - name: Publish download link (Releases page)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: Buddy (latest build)
+          body: "Download Buddy.apk below and open it on an Android phone to install."
+          files: Buddy.apk
+          make_latest: true
