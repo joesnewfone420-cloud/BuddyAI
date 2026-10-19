@@ -1,0 +1,16 @@
+name = "buddy-brain"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+[ai]
+binding = "AI"
+
+# Each phone can ask 20 questions a minute.
+[[ratelimits]]
+name = "LIMITER"
+namespace_id = "1001"
+  [ratelimits.simple]
+  limit = 20
+  period = 60
+
+# To add the optional password, run:  npx wrangler secret put APP_TOKEN
